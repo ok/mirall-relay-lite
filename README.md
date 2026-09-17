@@ -7,25 +7,6 @@
   </a>
 </p>
 
-<p align="center">
-  A minimal blind relay for Mirall. One key, one container, nothing it can read.
-  <br>
-  <a href="https://mirall.app"><strong>mirall.app »</strong></a>
-  <br>
-  <br>
-  <a href="https://mirall.app/docs/explanation#relays">What a relay is</a>
-  ·
-  <a href="https://github.com/ok/mirall-relay">The full relay</a>
-  ·
-  <a href="https://github.com/ok/mirall-relay-lite/issues">Report a bug</a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/ok/mirall-relay-lite/actions/workflows/ci.yml"><img src="https://github.com/ok/mirall-relay-lite/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License: Apache-2.0"></a>
-  <a href="https://github.com/ok/mirall-relay-lite/pkgs/container/mirall-relay-lite"><img src="https://img.shields.io/badge/ghcr.io-mirall--relay--lite-555" alt="Container image"></a>
-</p>
-
 ---
 
 # Mirall Relay Lite
