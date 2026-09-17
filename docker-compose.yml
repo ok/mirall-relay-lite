@@ -1,7 +1,8 @@
 services:
   relay:
-    # Pinned to the major, so you get fixes but never a breaking change you did not ask for.
-    image: ghcr.io/ok/mirall-relay-lite:latest # pin by @sha256 digest in production
+    # `latest` moves with every release, including a breaking one. Pin by @sha256 digest in
+    # production — every publish prints its digest to the workflow summary.
+    image: ghcr.io/ok/mirall-relay-lite:latest
     # Present so the compose file works from a checkout with no registry access at all:
     # `docker compose up -d --build` builds this image locally under the name above. Operators
     # pulling a published image never touch it.

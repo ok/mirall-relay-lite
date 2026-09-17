@@ -67,11 +67,20 @@ rather than using someone else's. That is the point of this repository being pub
 ## Quick start (Docker)
 
 ```sh
-# 1. Run it. The named volume is what keeps the identity stable.
-docker compose up -d
+# 1. Get the image. Published to the GitHub Container Registry on every release,
+#    for linux/amd64 and linux/arm64. No account or login needed — it is public.
+docker pull ghcr.io/ok/mirall-relay-lite:latest
 
-# 2. Take the key out of the log. It is created on first boot — there is no keygen step.
-docker compose logs relay
+# 2. Run it. The named volume is what keeps the identity stable across restarts;
+#    --network host is the right choice on Linux (see Networking notes).
+docker run -d --name mirall-relay-lite --restart unless-stopped \
+  --network host \
+  -v mirall-relay-data:/data \
+  ghcr.io/ok/mirall-relay-lite:latest
+
+# 3. Take the key out of the log. It is created on first boot — there is no
+#    keygen step and no identity to generate up front.
+docker logs mirall-relay-lite
 ```
 
 ```
@@ -83,9 +92,12 @@ Paste that key into Mirall: Settings > Network > Relay > Add relay.
 Open relay: anyone with this key can use it.
 ```
 
-`docker-compose.yml` pulls `ghcr.io/ok/mirall-relay-lite:latest`, so nothing is built locally —
-that one file is all you need on the host, and [The image](#the-image) covers the tags. To run it
-from source instead, clone the repository and `docker compose up -d --build`.
+Prefer Compose? The repository's `docker-compose.yml` does exactly the above — same image, same
+volume, same networking — so `docker compose up -d` and `docker compose logs relay` replace steps
+2 and 3. That one file is all you need on the host; nothing is built locally. To run from source
+instead, clone the repository and `docker compose up -d --build`.
+
+`:latest` is the moving tag. [The image](#the-image) covers pinning to `0.1` or a digest.
 
 **This relay has no status page and no HTTP at all.** There is nothing to open in a browser and
 nothing to curl: it speaks UDP to the DHT and nothing else. You confirm it is reachable from
