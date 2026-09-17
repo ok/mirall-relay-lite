@@ -1,0 +1,17 @@
+services:
+  relay:
+    image: ghcr.io/ok/relay:1
+    restart: unless-stopped
+    # Linux: host networking is the reliable choice. A hyperdht node binds two UDP sockets — a
+    # fixed server socket (the one below) and a random outbound one — and bridge NAT can rewrite
+    # the source port out from under the DHT's own view of its address.
+    network_mode: host
+    environment:
+      MIRALL_RELAY_PORT: "49737"
+      # MIRALL_RELAY_ALLOW: "<peer-key> <peer-key>"   # optional; empty means open to anyone
+      # MIRALL_RELAY_STATS_INTERVAL: "60000"          # optional; log the counters
+    volumes:
+      # Holds relay.seed — this file IS your relay's identity. Back it up.
+      - relay-data:/data
+volumes:
+  relay-data:

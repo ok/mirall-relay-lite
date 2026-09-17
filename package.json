@@ -1,0 +1,21 @@
+{
+  "name": "mirall-relay-lite",
+  "version": "0.1.0",
+  "description": "A minimal blind relay for Mirall — forwards encrypted connections between peers that cannot hole-punch",
+  "license": "Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/ok/mirall-relay-lite.git" },
+  "bin": { "mirall-relay-lite": "bin/mirall-relay-lite.js" },
+  "files": ["bin", "src"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "brittle test/*.test.js",
+    "start": "node bin/mirall-relay-lite.js"
+  },
+  "dependencies": {
+    "blind-relay": "^1.6.1",
+    "hypercore-crypto": "^3.4.2",
+    "hypercore-id-encoding": "^1.3.0",
+    "hyperdht": "~6.32.0"
+  },
+  "devDependencies": { "brittle": "^3.5.0" }
+}

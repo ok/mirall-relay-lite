@@ -1,0 +1,6 @@
+node_modules/
+data/
+*.log
+
+# A relay identity must never reach a public repo.
+*.seed
