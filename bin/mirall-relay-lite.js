@@ -10,7 +10,7 @@ const statsMs = Number(env.MIRALL_RELAY_STATS_INTERVAL || 0)
 function human (l) {
   if (l.event === 'listening') {
     return `relay listening on udp/${l.port}\n\n  ${l.publicKey}\n\n` +
-      `Paste that key into Mirall: Settings > Network > Relays > Add relay.` +
+      `Paste that key into Mirall: Settings > Network > Relay > Add relay.` +
       (l.allowlist ? `\nAllowlist: ${l.allowlist} key(s).` : `\nOpen relay: anyone with this key can use it.`)
   }
   return `${l.event} ${JSON.stringify(l)}`

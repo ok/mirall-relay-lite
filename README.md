@@ -3,6 +3,11 @@
 A minimal **blind relay** for [Mirall](https://mirall.app). It helps two devices connect when
 their networks block a direct link. It forwards encrypted bytes it cannot read.
 
+What a relay is and what its operator can see is documented once, on the website:
+[Relays, and what they can see](https://mirall.app/docs/explanation#relays). This README is the
+operator half. The person pasting the key wants
+[Connect through a relay](https://mirall.app/docs/guides#use-a-relay) instead.
+
 ```sh
 docker compose up -d
 docker compose logs relay
@@ -11,14 +16,19 @@ docker compose logs relay
 ```
 relay listening on udp/49737
 
-  3fok381gh3x193tqtg5p3zjnmpafrcnefmucgb87tam9wox3daoo
+  <your relay key: 52 characters of z-base-32>
 
-Paste that key into Mirall: Settings > Network > Relays > Add relay.
+Paste that key into Mirall: Settings > Network > Relay > Add relay.
 Open relay: anyone with this key can use it.
 ```
 
-That key is the entire configuration. In Mirall: **Settings ▸ Network ▸ Relays ▸ Add relay**,
-paste, then **Test** — it should say *Reachable*.
+That key is the entire configuration. In Mirall: **Settings ▸ Network ▸ Relay ▸ Add relay**,
+paste, **Continue**, then **Add relay**. Mirall probes it on its own; the row should settle on
+**Reachable**, and **Test** in its menu re-runs that.
+
+Do this on **both** devices where you can. One side supplying a relay is enough for a connection
+to be made, but if the side without one is the side behind the restrictive network, the
+connection only recovers after the other side's direct attempt times out.
 
 ## Before you start
 
@@ -65,8 +75,9 @@ environment:
   MIRALL_RELAY_ALLOW: "<peer-key> <peer-key>"
 ```
 
-For anything larger — invites, membership that changes, metering — you want the full Mirall relay
-rather than this one.
+For anything larger — invites you can mint and revoke per person, membership that changes, an
+operator status page, caps and metering — you want
+[mirall-relay](https://github.com/ok/mirall-relay), the full relay, rather than this one.
 
 ## Configuration
 
