@@ -1,6 +1,11 @@
 services:
   relay:
-    image: ghcr.io/ok/relay:1
+    # Pinned to the major, so you get fixes but never a breaking change you did not ask for.
+    image: ghcr.io/ok/mirall-relay-lite:latest # pin by @sha256 digest in production
+    # Present so the compose file works from a checkout with no registry access at all:
+    # `docker compose up -d --build` builds this image locally under the name above. Operators
+    # pulling a published image never touch it.
+    build: .
     restart: unless-stopped
     # Linux: host networking is the reliable choice. A hyperdht node binds two UDP sockets — a
     # fixed server socket (the one below) and a random outbound one — and bridge NAT can rewrite

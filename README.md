@@ -8,28 +8,6 @@ What a relay is and what its operator can see is documented once, on the website
 operator half. The person pasting the key wants
 [Connect through a relay](https://mirall.app/docs/guides#use-a-relay) instead.
 
-```sh
-docker compose up -d
-docker compose logs relay
-```
-
-```
-relay listening on udp/49737
-
-  <your relay key: 52 characters of z-base-32>
-
-Paste that key into Mirall: Settings > Network > Relay > Add relay.
-Open relay: anyone with this key can use it.
-```
-
-That key is the entire configuration. In Mirall: **Settings ▸ Network ▸ Relay ▸ Add relay**,
-paste, **Continue**, then **Add relay**. Mirall probes it on its own; the row should settle on
-**Reachable**, and **Test** in its menu re-runs that.
-
-Do this on **both** devices where you can. One side supplying a relay is enough for a connection
-to be made, but if the side without one is the side behind the restrictive network, the
-connection only recovers after the other side's direct attempt times out.
-
 ## Before you start
 
 **Your relay needs a real public IP and inbound UDP.** A VPS, or a home server behind a router you
@@ -48,6 +26,65 @@ valid. The port matters solely for your own firewall and port-forward — which 
 the one you chose, and not one silently substituted underneath you.
 
 There is no HTTP, no TCP and no TLS here, so there is nothing to put behind nginx or Caddy.
+
+## Install it
+
+You need **Docker** on the host. If it is not there yet:
+
+```sh
+# Debian/Ubuntu and most other Linux distributions
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker "$USER"   # then log out and back in
+```
+
+Other platforms, and the manual package instructions, are at
+[docs.docker.com/engine/install](https://docs.docker.com/engine/install/). On macOS or Windows
+install [Docker Desktop](https://docs.docker.com/desktop/) instead — useful for trying this out,
+but not a host to run a real relay on, for the reasons above.
+
+Then bring the relay up from a checkout:
+
+```sh
+git clone https://github.com/ok/mirall-relay-lite
+cd mirall-relay-lite
+docker compose up -d --build
+docker compose logs relay
+```
+
+`--build` is doing real work: **no image has been published for this repository yet**, so
+`docker compose up -d` on its own fails with `manifest unknown`. Building from the checkout needs
+no registry access and is the supported path today.
+
+`docker-compose.yml` already points at `ghcr.io/ok/mirall-relay-lite:latest`, and CI publishes
+there on a `v*` tag — see [The image](#the-image). Once a release is cut, `docker compose pull && docker compose up -d`
+is enough and `--build` can go.
+
+If you want a ready-made image right now, run the full relay instead:
+[mirall-relay](https://github.com/ok/mirall-relay) publishes
+[ghcr.io/ok/mirall-relay](https://github.com/ok/mirall-relay/pkgs/container/mirall-relay), so
+`docker run ghcr.io/ok/mirall-relay:latest` works without a checkout. It is a larger program —
+invites, a status page, caps, metrics — but it is one pull away.
+
+## Hand out the key
+
+`docker compose logs relay` prints it:
+
+```
+relay listening on udp/49737
+
+  <your relay key: 52 characters of z-base-32>
+
+Paste that key into Mirall: Settings > Network > Relay > Add relay.
+Open relay: anyone with this key can use it.
+```
+
+That key is the entire configuration. In Mirall: **Settings ▸ Network ▸ Relay ▸ Add relay**,
+paste, **Continue**, then **Add relay**. Mirall probes it on its own; the row should settle on
+**Reachable**, and **Test** in its menu re-runs that.
+
+Do this on **both** devices where you can. One side supplying a relay is enough for a connection
+to be made, but if the side without one is the side behind the restrictive network, the
+connection only recovers after the other side's direct attempt times out.
 
 ## Back up `relay.seed`
 
@@ -142,12 +179,39 @@ A hyperdht node binds **two** UDP sockets — a fixed server socket and a random
 bridge NAT can rewrite the source port out from under the DHT's own view of its address. If you
 must use bridge networking, publish `49737:49737/udp` and verify with **Test** in the app.
 
+## The image
+
+Published to the GitHub Container Registry on every `v*` tag, built for **linux/amd64** and
+**linux/arm64**:
+
+```
+ghcr.io/ok/mirall-relay-lite
+```
+
+One tag push produces three tags — `0.1.0`, `0.1` and `latest` — so you choose how much drift you
+accept:
+
+| Reference | Moves when |
+|---|---|
+| `:latest` | every release, including a breaking one |
+| `:0.1` | a patch release within 0.1 |
+| `:0.1.0` | never |
+| `@sha256:…` | never — the digest names one specific build |
+
+`docker-compose.yml` ships `:latest`, which is right for a relay you re-pull on purpose. **Pin the
+digest in production.** Every publish prints its digest to the workflow summary, and the
+[package page](https://github.com/ok/mirall-relay-lite/pkgs/container/mirall-relay-lite) lists
+them all.
+
+A tag only publishes if the tests, the multi-arch build, the size budget and the live-DHT smoke
+test all pass first — `publish` needs them, so a broken tag pushes nothing.
+
 ## Development
 
 ```sh
 npm install
 npm test          # unit + integration, no network required
-docker build -t ghcr.io/ok/relay:dev .
+docker build -t mirall-relay-lite:local .
 ```
 
 ## Licence
